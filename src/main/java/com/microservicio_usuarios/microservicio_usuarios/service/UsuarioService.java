@@ -1,4 +1,5 @@
 package com.microservicio_usuarios.microservicio_usuarios.service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,13 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    //Obtener todos los usuarios
+    // Obtener todos los usuarios
     public List<Usuario> listarTodos() {
         log.info("Listando todos los usuarios");
         return usuarioRepository.findAll();
     }
 
-    //Crear un usuario
+    // Crear un usuario
     public Usuario crear(Usuario usuario) {
         log.info("Creando usuario: {}", usuario.getEmail());
 
@@ -43,19 +44,19 @@ public class UsuarioService {
         return saved;
     }
 
-    //Obtener usuario mediante id
+    // Obtener usuario mediante id
     public Optional<Usuario> obtenerUsuarioPorId(Long id) {
         log.info("Buscando usuario con id {}", id);
         return usuarioRepository.findById(id);
     }
 
-    //Obtener usuario mediante con excepción
+    // Obtener usuario mediante con excepción
     private Usuario obtenerPorId(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
     }
 
-    //Actualizar un usuario
+    // Actualizar un usuario
     public Usuario actualizar(Long id, Usuario dto) {
         log.info("Actualizando usuario con id {}", id);
 
@@ -79,7 +80,7 @@ public class UsuarioService {
         return updated;
     }
 
-    //Eliminar usuario
+    // Eliminar usuario
     public void eliminar(Long id) {
         log.info("Eliminando usuario con id {}", id);
         Usuario existente = obtenerPorId(id);
