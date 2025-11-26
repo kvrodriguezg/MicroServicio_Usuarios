@@ -1,24 +1,23 @@
-# Archivos y directorios de Maven
-target/
+#Archivos y directorios de Maven
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-# Archivos de IDE
+#Archivos de IDE
 .idea/
 *.iws
 *.iml
 *.ipr
 .vscode/
 
-# Archivos de sistema
+#Archivos de sistema
 .DS_Store
 Thumbs.db
 
-# Logs
+#Logs
 *.log
 
-# Archivos temporales
+#Archivos temporales
 *.tmp
 *.bak
 *.swp

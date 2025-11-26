@@ -31,3 +31,14 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Oracle Wallet###
+Wallet_*/
+*.sso
+*.p12
+tnsnames.ora
+sqlnet.ora
+ojdbc.properties
+
+### Docker ###
+*.log
