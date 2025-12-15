@@ -1,4 +1,5 @@
 package com.microservicio_usuarios.microservicio_usuarios.model;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Usuario {
 
-    //Se especifican los campos de la entidad a crear y sus validaciones
+    // Se especifican los campos de la entidad a crear y sus validaciones
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,6 +32,10 @@ public class Usuario {
     @Pattern(regexp = "^(ADMIN|USER)$", message = "El rol debe ser ADMIN o USER")
     @Column(nullable = false, length = 10)
     private String rol;
+
+    @NotBlank(message = "La contraseña es obligatoria")
+    @Column(nullable = false)
+    private String password;
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;

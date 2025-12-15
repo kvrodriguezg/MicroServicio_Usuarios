@@ -8,5 +8,5 @@ COPY target/*.jar app.jar
 COPY Wallet_CRYHZIE2RBKI7PDG /app/Wallet_CRYHZIE2RBKI7PDG
 
 #Puerto
-EXPOSE 8080
+EXPOSE 9090
 ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "app.jar"]

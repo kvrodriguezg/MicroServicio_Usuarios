@@ -10,4 +10,9 @@ class MicroservicioUsuariosApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void main() {
+		MicroservicioUsuariosApplication.main(new String[] {});
+	}
+
 }
