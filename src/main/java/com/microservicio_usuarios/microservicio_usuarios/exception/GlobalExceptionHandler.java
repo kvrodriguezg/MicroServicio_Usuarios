@@ -1,4 +1,5 @@
 package com.microservicio_usuarios.microservicio_usuarios.exception;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//Clase para manejo globlal de las excepciones
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {

@@ -21,13 +21,17 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Obtener todos los usuarios
     public List<Usuario> listarTodos() {
         log.info("Listando todos los usuarios");
         return usuarioRepository.findAll();
     }
 
-    // Crear un usuario
+    private String limpiarRut(String rut) {
+        if (rut == null)
+            return null;
+        return rut.replace(".", "").replace("-", "").toUpperCase();
+    }
+
     public Usuario crear(Usuario usuario) {
         log.info("Creando usuario: {}", usuario.getEmail());
 
@@ -36,32 +40,45 @@ public class UsuarioService {
             throw new BadRequestException("El email ya está registrado");
         }
 
+        String rutLimpio = limpiarRut(usuario.getRut());
+        usuario.setRut(rutLimpio);
+
+        if (usuario.getRut() != null && usuarioRepository.existsByRut(usuario.getRut())) {
+            log.warn("Intento crear usuario con rut ya existente: {}", usuario.getRut());
+            throw new BadRequestException("El rut ya está registrado");
+        }
+
+        if (usuario.getTelefono() != null && usuarioRepository.existsByTelefono(usuario.getTelefono())) {
+            log.warn("Intento crear usuario con telefono ya existente: {}", usuario.getTelefono());
+            throw new BadRequestException("El teléfono ya está registrado");
+        }
+
+        if (usuario.getPassword() == null || usuario.getPassword().isBlank()) {
+            throw new BadRequestException("La contraseña es obligatoria");
+        }
+
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         usuario.setFechaRegistro(LocalDateTime.now());
         Usuario saved = usuarioRepository.save(usuario);
 
-        // Evita advertencia de tipo nulo
         Long id = Objects.requireNonNull(saved.getId(), "El id no debe ser nulo después de guardar");
         log.info("Usuario creado con id {}", id);
 
         return saved;
     }
 
-    // Obtener usuario mediante id
     @SuppressWarnings("null")
     public Optional<Usuario> obtenerUsuarioPorId(Long id) {
         log.info("Buscando usuario con id {}", id);
         return usuarioRepository.findById(id);
     }
 
-    // Obtener usuario mediante con excepción
     @SuppressWarnings("null")
     private Usuario obtenerPorId(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado con id: " + id));
     }
 
-    // Actualizar un usuario
     public Usuario actualizar(Long id, Usuario dto) {
         log.info("Actualizando usuario con id {}", id);
 
@@ -72,9 +89,28 @@ public class UsuarioService {
             throw new BadRequestException("El email ya está registrado por otro usuario");
         }
 
+        String rutLimpio = limpiarRut(dto.getRut());
+        dto.setRut(rutLimpio);
+
+        if (dto.getRut() != null && !dto.getRut().equals(existente.getRut())
+                && usuarioRepository.existsByRut(dto.getRut())) {
+            log.warn("Intento de actualizar con un rut ya existente: {}", dto.getRut());
+            throw new BadRequestException("El rut ya está registrado por otro usuario");
+        }
+
+        if (dto.getTelefono() != null && !dto.getTelefono().equals(existente.getTelefono())
+                && usuarioRepository.existsByTelefono(dto.getTelefono())) {
+            log.warn("Intento de actualizar con un telefono ya existente: {}", dto.getTelefono());
+            throw new BadRequestException("El teléfono ya está registrado por otro usuario");
+        }
+
         existente.setNombre(dto.getNombre());
         existente.setEmail(dto.getEmail());
         existente.setRol(dto.getRol());
+
+        existente.setRut(dto.getRut());
+        existente.setTelefono(dto.getTelefono());
+        existente.setFechaNacimiento(dto.getFechaNacimiento());
 
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             existente.setPassword(passwordEncoder.encode(dto.getPassword()));
@@ -82,14 +118,12 @@ public class UsuarioService {
 
         Usuario updated = usuarioRepository.save(existente);
 
-        // Evita advertencia de tipo nulo
         Long updatedId = Objects.requireNonNull(updated.getId(), "El id no debe ser nulo después de actualizar");
         log.info("Usuario actualizado id {}", updatedId);
 
         return updated;
     }
 
-    // Eliminar usuario
     @SuppressWarnings("null")
     public void eliminar(Long id) {
         log.info("Eliminando usuario con id {}", id);
@@ -98,7 +132,6 @@ public class UsuarioService {
         log.info("Usuario eliminado id {}", id);
     }
 
-    // Login
     public Usuario login(String email, String password) {
         log.info("Intento de login para email: {}", email);
         Usuario usuario = usuarioRepository.findByEmail(email)

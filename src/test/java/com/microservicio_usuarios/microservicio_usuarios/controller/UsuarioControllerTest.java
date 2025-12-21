@@ -23,155 +23,197 @@ import com.microservicio_usuarios.microservicio_usuarios.service.UsuarioService;
 @org.springframework.context.annotation.Import(com.microservicio_usuarios.microservicio_usuarios.config.SecurityConfig.class)
 class UsuarioControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @MockitoBean
-    private UsuarioService usuarioService;
+        @MockitoBean
+        private UsuarioService usuarioService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private Usuario usuario;
+        private Usuario usuario;
 
-    // Antes de cada test
-    @BeforeEach
-    void setUp() {
-        usuario = new Usuario();
-        usuario.setId(1L);
-        usuario.setNombre("Test User");
-        usuario.setEmail("test@example.com");
-        usuario.setRol("USER");
-        usuario.setPassword("password123");
-    }
+        @BeforeEach
+        void setUp() {
+                usuario = new Usuario();
+                usuario.setId(1L);
+                usuario.setNombre("Test User");
+                usuario.setEmail("test@example.com");
+                usuario.setRol("USER");
+                usuario.setPassword("password123");
+        }
 
-    @Test
-    void listar_RetornarListaDeUsuarios() throws Exception {
-        when(usuarioService.listarTodos()).thenReturn(Arrays.asList(usuario));
+        @Test
+        void listar_RetornarListaDeUsuarios() throws Exception {
+                when(usuarioService.listarTodos()).thenReturn(Arrays.asList(usuario));
 
-        mockMvc.perform(get("/api/usuarios"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value("test@example.com"));
-    }
+                mockMvc.perform(get("/api/usuarios"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$[0].email").value("test@example.com"));
+        }
 
-    @Test
-    void obtener_RetornarUsuario_CuandoExiste() throws Exception {
-        when(usuarioService.obtenerUsuarioPorId(1L)).thenReturn(Optional.of(usuario));
+        @Test
+        void obtener_RetornarUsuario_CuandoExiste() throws Exception {
+                when(usuarioService.obtenerUsuarioPorId(1L)).thenReturn(Optional.of(usuario));
 
-        mockMvc.perform(get("/api/usuarios/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Test User"));
-    }
+                mockMvc.perform(get("/api/usuarios/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.nombre").value("Test User"));
+        }
 
-    @Test
-    void obtener_RetornarNotFound_CuandoNoExiste() throws Exception {
-        when(usuarioService.obtenerUsuarioPorId(99L)).thenReturn(Optional.empty());
+        @Test
+        void obtener_RetornarNotFound_CuandoNoExiste() throws Exception {
+                when(usuarioService.obtenerUsuarioPorId(99L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/usuarios/99"))
-                .andExpect(status().isNotFound());
-    }
+                mockMvc.perform(get("/api/usuarios/99"))
+                                .andExpect(status().isNotFound());
+        }
 
-    @Test
-    @SuppressWarnings("null")
-    void crear_RetornarCreated_CuandoEsValido() throws Exception {
-        when(usuarioService.crear(any(Usuario.class))).thenReturn(usuario);
+        @Test
+        @SuppressWarnings("null")
+        void crear_RetornarCreated_CuandoEsValido() throws Exception {
+                when(usuarioService.crear(any(Usuario.class))).thenReturn(usuario);
 
-        mockMvc.perform(post("/api/usuarios")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email").value("test@example.com"));
-    }
+                mockMvc.perform(post("/api/usuarios")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(usuario)))
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.email").value("test@example.com"));
+        }
 
-    @Test
-    @SuppressWarnings("null")
-    void actualizar_RetornarOk_CuandoActualizacionExitosa() throws Exception {
-        when(usuarioService.actualizar(eq(1L), any(Usuario.class))).thenReturn(usuario);
+        @Test
+        @SuppressWarnings("null")
+        void actualizar_RetornarOk_CuandoActualizacionExitosa() throws Exception {
+                when(usuarioService.actualizar(eq(1L), any(Usuario.class))).thenReturn(usuario);
 
-        mockMvc.perform(put("/api/usuarios/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nombre").value("Test User"));
-    }
+                mockMvc.perform(put("/api/usuarios/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(usuario)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.nombre").value("Test User"));
+        }
 
-    @Test
-    void eliminar_RetornarNoContent() throws Exception {
-        doNothing().when(usuarioService).eliminar(1L);
+        @Test
+        void eliminar_RetornarNoContent() throws Exception {
+                doNothing().when(usuarioService).eliminar(1L);
 
-        mockMvc.perform(delete("/api/usuarios/1"))
-                .andExpect(status().isNoContent());
-    }
+                mockMvc.perform(delete("/api/usuarios/1"))
+                                .andExpect(status().isNoContent());
+        }
 
-    @Test
-    @SuppressWarnings("null")
-    void crear_RetornarBadRequest_CuandoDatosInvalidos() throws Exception {
-        Usuario usuarioInvalido = new Usuario(); // Campos vacíos
+        @Test
+        @SuppressWarnings("null")
+        void crear_RetornarBadRequest_CuandoDatosInvalidos() throws Exception {
+                Usuario usuarioInvalido = new Usuario(); 
 
-        mockMvc.perform(post("/api/usuarios")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuarioInvalido)))
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/api/usuarios")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(usuarioInvalido)))
+                                .andExpect(status().isBadRequest());
+        }
 
-    @Test
-    @SuppressWarnings("null")
-    void crear_RetornarBadRequest_CuandoLanzaExcepcion() throws Exception {
-        when(usuarioService.crear(any(Usuario.class)))
-                .thenThrow(new com.microservicio_usuarios.microservicio_usuarios.exception.BadRequestException(
-                        "Error simple"));
+        @Test
+        @SuppressWarnings("null")
+        void crear_RetornarBadRequest_CuandoLanzaExcepcion() throws Exception {
+                when(usuarioService.crear(any(Usuario.class)))
+                                .thenThrow(new com.microservicio_usuarios.microservicio_usuarios.exception.BadRequestException(
+                                                "Error simple"));
 
-        mockMvc.perform(post("/api/usuarios")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/api/usuarios")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(usuario)))
+                                .andExpect(status().isBadRequest());
+        }
 
-    @Test
-    void listar_RetornarInternalServer_CuandoFalla() throws Exception {
-        when(usuarioService.listarTodos()).thenThrow(new RuntimeException("Error inesperado"));
+        @Test
+        void listar_RetornarInternalServer_CuandoFalla() throws Exception {
+                when(usuarioService.listarTodos()).thenThrow(new RuntimeException("Error inesperado"));
 
-        mockMvc.perform(get("/api/usuarios"))
-                .andExpect(status().isInternalServerError());
-    }
+                mockMvc.perform(get("/api/usuarios"))
+                                .andExpect(status().isInternalServerError());
+        }
 
-    @Test
-    @SuppressWarnings("null")
-    void actualizar_RetornarNotFound_CuandoUsuarioNoExiste() throws Exception {
-        when(usuarioService.actualizar(eq(99L), any(Usuario.class)))
-                .thenThrow(new com.microservicio_usuarios.microservicio_usuarios.exception.ResourceNotFoundException(
-                        "Usuario no encontrado"));
+        @Test
+        @SuppressWarnings("null")
+        void actualizar_RetornarNotFound_CuandoUsuarioNoExiste() throws Exception {
+                when(usuarioService.actualizar(eq(99L), any(Usuario.class)))
+                                .thenThrow(new com.microservicio_usuarios.microservicio_usuarios.exception.ResourceNotFoundException(
+                                                "Usuario no encontrado"));
 
-        mockMvc.perform(put("/api/usuarios/99")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(usuario)))
-                .andExpect(status().isNotFound());
-    }
+                mockMvc.perform(put("/api/usuarios/99")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(usuario)))
+                                .andExpect(status().isNotFound());
+        }
 
-    @Test
-    void login_RetornarOk_CuandoCredencialesCorrectas() throws Exception {
-        when(usuarioService.login("test@example.com", "password123")).thenReturn(usuario);
+        @SuppressWarnings("null")
+        @Test
+        void login_RetornarOk_CuandoCredencialesCorrectas() throws Exception {
+                when(usuarioService.login("test@example.com", "password123")).thenReturn(usuario);
 
-        java.util.Map<String, String> creds = new java.util.HashMap<>();
-        creds.put("email", "test@example.com");
-        creds.put("password", "password123");
+                java.util.Map<String, String> creds = new java.util.HashMap<>();
+                creds.put("email", "test@example.com");
+                creds.put("password", "password123");
 
-        mockMvc.perform(post("/api/usuarios/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(creds)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("test@example.com"));
-    }
+                mockMvc.perform(post("/api/usuarios/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(creds)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.email").value("test@example.com"));
+        }
 
-    @Test
-    void login_RetornarBadRequest_CuandoFaltanDatos() throws Exception {
-        java.util.Map<String, String> creds = new java.util.HashMap<>();
-        creds.put("email", "test@example.com");
-        // missing password
+        @SuppressWarnings("null")
+        @Test
+        void login_RetornarBadRequest_CuandoFaltanDatos() throws Exception {
+                java.util.Map<String, String> creds = new java.util.HashMap<>();
+                creds.put("email", "test@example.com");
+                
 
-        mockMvc.perform(post("/api/usuarios/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(creds)))
-                .andExpect(status().isBadRequest());
-    }
+                mockMvc.perform(post("/api/usuarios/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(creds)))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        void login_RetornarBadRequest_CuandoEmailEsNulo() throws Exception {
+                java.util.Map<String, String> creds = new java.util.HashMap<>();
+                creds.put("password", "password123");
+                
+
+                mockMvc.perform(post("/api/usuarios/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(creds)))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        void login_RetornarBadRequest_CuandoCredencialesIncorrectas() throws Exception {
+                when(usuarioService.login("test@example.com", "wrongpass"))
+                                .thenThrow(new com.microservicio_usuarios.microservicio_usuarios.exception.BadRequestException(
+                                                "Credenciales incorrectas"));
+
+                java.util.Map<String, String> creds = new java.util.HashMap<>();
+                creds.put("email", "test@example.com");
+                creds.put("password", "wrongpass");
+
+                mockMvc.perform(post("/api/usuarios/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(creds)))
+                                .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        void eliminar_RetornarNotFound_CuandoUsuarioNoExiste() throws Exception {
+                org.mockito.Mockito.doThrow(
+                                new com.microservicio_usuarios.microservicio_usuarios.exception.ResourceNotFoundException(
+                                                "Usuario no encontrado"))
+                                .when(usuarioService).eliminar(99L);
+
+                mockMvc.perform(delete("/api/usuarios/99"))
+                                .andExpect(status().isNotFound());
+        }
 }

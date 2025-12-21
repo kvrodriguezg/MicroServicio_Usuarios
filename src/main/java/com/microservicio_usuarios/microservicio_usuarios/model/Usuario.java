@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Builder
 public class Usuario {
 
-    // Se especifican los campos de la entidad a crear y sus validaciones
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,10 +32,20 @@ public class Usuario {
     @Column(nullable = false, length = 10)
     private String rol;
 
-    @NotBlank(message = "La contraseña es obligatoria")
+    
+    
     @Column(nullable = false)
     private String password;
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
+
+    @Column(length = 20)
+    private String rut;
+
+    @Column(length = 20)
+    private String telefono;
+
+    @Column(name = "fecha_nacimiento")
+    private java.time.LocalDate fechaNacimiento;
 }
